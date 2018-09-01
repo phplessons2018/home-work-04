@@ -1,33 +1,72 @@
 <?php
 namespace Src;
 
+
 class BaseTariff extends TemplateTariff
 {
-    private $pricePerTime = 3;
-    private $pricePerDistance = 10;
+    const PRICE_PER_TIME = 3;
+    const PRICE_PER_DISTANCE = 10;
+    use GPS, ExtraDriver;
 
-    public function countTariff()
+
+
+    // Result with check on students
+    public function total()
     {
-        $this->countPriceDistance() + $this->countPriceTime();
+        if($this->years > 21) {
+            return $this->standardConditions();
+        } else {
+            return $this->studentConditions();
+        }
     }
 
-    // Count spend money on distance
 
-    public function countPriceDistance()
+    //  Check for activation of additional services for all users
+    public function standardConditions()
     {
-        $this->pricePerDistance * $this->spendDistance;
+        if ($this->gps === false) {
+            return $this->sumDistanceAndPrice();
+        } elseif ($this->gps === true) {
+            return $this->sumDistanceAndPrice() + $this->spendTime * $this->gpsSum();
+        }
     }
 
-    // Count spend money on time
-
-    public function countPriceTime()
+    //  Check for activation of additional services for students
+    public function studentConditions()
     {
-        $this->spendTime * $this->pricePerTime;
+        if ($this->gps === false) {
+            return $this->sumDistanceAndPriceForStudents();
+        } elseif ($this->gps === true) {
+            return $this->sumDistanceAndPriceForStudents() + $this->spendTime * $this->gpsSum();
+        }
     }
 
+    //  Total result distance and time for students
+    public function sumDistanceAndPriceForStudents() {
+        return ($this->sumPriceDistance() + $this->sumPriceTime()) * 1.1;
+    }
+
+    //  Total result distance and time
+    public function sumDistanceAndPrice() {
+        return $this->sumPriceDistance() + $this->sumPriceTime();
+    }
+
+    // Sum spend money on distance
+    public function sumPriceDistance()
+    {
+        return $this->spendDistance * self::PRICE_PER_DISTANCE;
+
+    }
+
+    // Sum spend money on time
+    public function sumPriceTime()
+    {
+        return $this->spendTime * self::PRICE_PER_TIME;
+    }
 
 
 }
+
 
 
 

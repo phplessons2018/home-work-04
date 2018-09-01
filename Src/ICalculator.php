@@ -3,6 +3,6 @@ namespace Src;
 
 interface ICalculator
 {
-    public function countTariff();
+    public function total();
 
 }
