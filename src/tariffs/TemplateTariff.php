@@ -1,5 +1,7 @@
 <?php
-namespace Src;
+namespace Src\Tariffs;
+
+use Src\ICalculator;
 
 abstract class TemplateTariff implements ICalculator
 {
@@ -12,7 +14,7 @@ abstract class TemplateTariff implements ICalculator
     public $spendDistance;
 
 
-    public function testYears() {
+    public function isValidateAge() {
         if (($this->years > 18) && ($this->years < 65)) {
             $this->total();
         } elseif ($this->years < 18) {

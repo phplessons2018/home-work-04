@@ -1,11 +1,13 @@
 <?php
-namespace Src;
+namespace Src\Tariffs;
 
+use Src\ExtraDriver;
+use Src\GPS;
 
-class BaseTariff extends TemplateTariff
+class StudentTariff extends TemplateTariff
 {
-    const PRICE_PER_TIME = 3;
-    const PRICE_PER_DISTANCE = 10;
+    const PRICE_PER_TIME = 1;
+    const PRICE_PER_DISTANCE = 4;
     use GPS, ExtraDriver;
 
 
@@ -13,13 +15,14 @@ class BaseTariff extends TemplateTariff
     // Result with check on students
     public function total()
     {
-        if($this->years > 21) {
+        if(($this->years > 21) && ($this->years < 25)) {
             return $this->standardConditions();
-        } else {
+        } elseif ($this->years < 21) {
             return $this->studentConditions();
+        } else {
+            return "Тариф студенческий не доступен, когда возраст больше 25";
         }
     }
-
 
     //  Check for activation of additional services for all users
     public function standardConditions()
@@ -40,6 +43,7 @@ class BaseTariff extends TemplateTariff
             return $this->sumDistanceAndPriceForStudents() + $this->spendTime * $this->gpsSum();
         }
     }
+
 
     //  Total result distance and time for students
     public function sumDistanceAndPriceForStudents() {
@@ -63,10 +67,5 @@ class BaseTariff extends TemplateTariff
     {
         return $this->spendTime * self::PRICE_PER_TIME;
     }
-
-
 }
-
-
-
 

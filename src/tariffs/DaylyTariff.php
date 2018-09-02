@@ -1,10 +1,13 @@
 <?php
-namespace Src;
+namespace Src\Tariffs;
 
-class HourlyTariff extends TemplateTariff
+use Src\ExtraDriver;
+use Src\GPS;
+
+class DaylyTariff extends TemplateTariff
 {
-    const PRICE_PER_TIME = 200;
-    const PRICE_PER_DISTANCE = 0;
+    const PRICE_PER_TIME = 1000;
+    const PRICE_PER_DISTANCE = 1;
     use GPS, ExtraDriver;
 
 
@@ -22,7 +25,7 @@ class HourlyTariff extends TemplateTariff
     //  Check for activation of additional services for all users
     public function standardConditions()
     {
-        if (($this->gps === false) && ($this->extraDriver === false)) {
+        if (!$this->gps && !$this->extraDriver) {
             return $this->sumDistanceAndPrice();
         } elseif (($this->gps === true) && ($this->extraDriver === false)) {
             return $this->sumDistanceAndPrice() + $this->spendTime * $this->gpsSum();
@@ -36,7 +39,7 @@ class HourlyTariff extends TemplateTariff
     //  Check for activation of additional services for students
     public function studentConditions()
     {
-        if (($this->gps === false) && ($this->extraDriver === false)) {
+        if (!$this->gps && !$this->extraDriver) {
             return $this->sumDistanceAndPriceForStudents();
         } elseif (($this->gps === true) && ($this->extraDriver === false)) {
             return $this->sumDistanceAndPriceForStudents() + $this->spendTime * $this->gpsSum();
@@ -50,25 +53,25 @@ class HourlyTariff extends TemplateTariff
 
     //  Total result distance and time for students
     public function sumDistanceAndPriceForStudents() {
-        return $this->sumPriceTime() * 1.1;
+        return ($this->sumPriceDistance() + $this->sumPriceTime()) * 1.1;
     }
 
     //  Total result distance and time
     public function sumDistanceAndPrice() {
-        return $this->sumPriceTime();
+        return $this->sumPriceDistance() + $this->sumPriceTime();
     }
 
+    // Sum spend money on distance
+    public function sumPriceDistance()
+    {
+        return $this->spendDistance * self::PRICE_PER_DISTANCE;
 
+    }
 
     // Sum spend money on time
     public function sumPriceTime()
     {
-        return ceil($this->spendTime/60) * self::PRICE_PER_TIME ;
+        return floor($this->spendTime/24) * self::PRICE_PER_TIME;
     }
-
-
-
-
 }
-
 
