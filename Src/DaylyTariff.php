@@ -3,7 +3,7 @@ namespace Src;
 
 class DaylyTariff extends TemplateTariff
 {
-    const PRICE_PER_TIME = 1000/1440;
+    const PRICE_PER_TIME = 1000;
     const PRICE_PER_DISTANCE = 1;
     use GPS, ExtraDriver;
 
@@ -68,7 +68,7 @@ class DaylyTariff extends TemplateTariff
     // Sum spend money on time
     public function sumPriceTime()
     {
-        return $this->spendTime * self::PRICE_PER_TIME;
+        return floor($this->spendTime/24) * self::PRICE_PER_TIME;
     }
 }
 

@@ -3,7 +3,7 @@ namespace Src;
 
 class HourlyTariff extends TemplateTariff
 {
-    const PRICE_PER_TIME = 200/60;
+    const PRICE_PER_TIME = 200;
     const PRICE_PER_DISTANCE = 0;
     use GPS, ExtraDriver;
 
@@ -50,26 +50,22 @@ class HourlyTariff extends TemplateTariff
 
     //  Total result distance and time for students
     public function sumDistanceAndPriceForStudents() {
-        return ($this->sumPriceDistance() + $this->sumPriceTime()) * 1.1;
+        return $this->sumPriceTime() * 1.1;
     }
 
     //  Total result distance and time
     public function sumDistanceAndPrice() {
-        return $this->sumPriceDistance() + $this->sumPriceTime();
+        return $this->sumPriceTime();
     }
 
-    // Sum spend money on distance
-    public function sumPriceDistance()
-    {
-        return $this->spendDistance * self::PRICE_PER_DISTANCE;
 
-    }
 
     // Sum spend money on time
     public function sumPriceTime()
     {
-        return $this->spendTime * self::PRICE_PER_TIME;
+        return ceil($this->spendTime/60) * self::PRICE_PER_TIME ;
     }
+
 
 
 
